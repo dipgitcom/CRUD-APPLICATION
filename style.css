@@ -1,0 +1,112 @@
+/* Reset some default styles */
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, form {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #c51f67;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    background-color: #e1a6a6;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;  /* Increased max-width for better size */
+    width: 100%;
+    overflow-y: auto;  /* Added overflow for vertical scroll */
+    max-height: 90vh;  /* Ensured the container fits within the viewport */
+}
+
+.title {
+    font-size: 28px;  /* Slightly larger font size */
+    margin-bottom: 25px;  /* Increased bottom margin */
+    text-align: center;
+    color: #100808;
+}
+
+.form .input {
+    margin-bottom: 20px;  /* Increased bottom margin for spacing */
+}
+
+.form .input label {
+    display: block;
+    margin-bottom: 8px;  /* Slightly increased bottom margin */
+    font-weight: bold;
+    color: #333;
+}
+
+.form .input .input-field, 
+.form .input textarea, 
+.form .input select {
+    width: 100%;
+    padding: 12px;  /* Increased padding */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form .input textarea {
+    height: 120px;  /* Slightly increased height */
+    resize: vertical;
+}
+
+.form .input .btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;  /* Adjusted padding */
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;  /* Button takes full width for better alignment */
+}
+
+.form .input .btn:hover {
+    background-color: #0056b3;
+}
+
+.form .input.terms {
+    display: flex;
+    align-items: center;
+}
+
+.form .input.terms label {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.form .input.terms input {
+    margin-right: 10px;
+}
+
+.form .input.terms p {
+    margin: 0;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+thead {
+    background-color: #333;
+    color: #fff;
+}
