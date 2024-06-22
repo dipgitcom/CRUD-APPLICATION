@@ -1,7 +1,32 @@
-<?php 
+<?php
+session_start();
 include("connection.php");
 
-$query = "SELECT * FROM FORM";
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+if (isset($_POST['update_status'])) {
+    $id = $_POST['id'];
+    $new_status = $_POST['new_status'];
+    
+    // Prepare and bind
+    $stmt = $conn->prepare("UPDATE FORM1 SET status=? WHERE id=?");
+    $stmt->bind_param("si", $new_status, $id);
+
+    if ($stmt->execute()) {
+        header("Location: " . $_SERVER['PHP_SELF']); // Refresh the page to reflect changes
+        exit();
+    } else {
+        echo "Error updating record: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+$query = "SELECT * FROM FORM1";
 $data = mysqli_query($conn, $query);
 $total = mysqli_num_rows($data);
 ?>
@@ -15,6 +40,8 @@ $total = mysqli_num_rows($data);
     <title>Database Records</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -36,6 +63,8 @@ $total = mysqli_num_rows($data);
             echo "<th>Phone Number</th>";
             echo "<th>Session</th>";
             echo "<th>CGPA</th>";
+            echo "<th>Status</th>";
+            echo "<th>Action</th>";
             echo "<th>Operations</th>";
             echo "</tr>";
             echo "</thead>";
@@ -54,9 +83,38 @@ $total = mysqli_num_rows($data);
                 echo "<td>" . $result['phone'] . "</td>";
                 echo "<td>" . $result['session'] . "</td>";
                 echo "<td>" . $result['cgpa'] . "</td>";
+                echo "<td>";
+                if ($result['status'] == 'accepted') {
+                    echo "<i class='fas fa-check-circle text-success'></i> Accepted";
+                } elseif ($result['status'] == 'rejected') {
+                    echo "<i class='fas fa-times-circle text-danger'></i> Rejected";
+                } else {
+                    echo "<i class='fas fa-hourglass-half text-warning'></i> Pending";
+                }
+                echo "</td>";
+                echo "<td>";
+                if ($result['status'] == 'pending') {
+                    echo "<form method='POST' action='' style='display:inline;'>
+                            <input type='hidden' name='id' value='" . $result['id'] . "'>
+                            <input type='hidden' name='new_status' value='accepted'>
+                            <button type='submit' name='update_status' class='btn btn-success btn-sm'>Accept</button>
+                          </form>";
+                    echo "<form method='POST' action='' style='display:inline;'>
+                            <input type='hidden' name='id' value='" . $result['id'] . "'>
+                            <input type='hidden' name='new_status' value='rejected'>
+                            <button type='submit' name='update_status' class='btn btn-danger btn-sm'>Reject</button>
+                          </form>";
+                } else {
+                    echo "<form method='POST' action='' style='display:inline;'>
+                            <input type='hidden' name='id' value='" . $result['id'] . "'>
+                            <input type='hidden' name='new_status' value='pending'>
+                            <button type='submit' name='update_status' class='btn btn-warning btn-sm'>Withdraw</button>
+                          </form>";
+                }
+                echo "</td>";
                 echo "<td>
-                        <a href='update_design.php?id=" . $result['id'] . "&fn=" . $result['fname'] . "&ln=" . $result['lname'] . "&pwd=" . $result['password'] . "&email=" . $result['email'] . "&dob=" . $result['dob'] . "&gen=" . $result['gender'] . "&add=" . $result['address'] . "&phone=" . $result['phone'] . "&ssn=" . $result['session'] . "&cgpa=" . $result['cgpa'] . "' class='btn btn-primary btn-sm'>Update</a>
-                        <a href='delete.php?id=" . $result['id'] . "&fn=" . $result['fname'] . "&ln=" . $result['lname'] . "&pwd=" . $result['password'] . "&email=" . $result['email'] . "&dob=" . $result['dob'] . "&gen=" . $result['gender'] . "&add=" . $result['address'] . "&phone=" . $result['phone'] . "&ssn=" . $result['session'] . "&cgpa=" . $result['cgpa'] . "' class='btn btn-danger btn-sm' onclick='return confirmDelete()'>Delete</a>
+                        <a href='update_design.php?id=" . $result['id'] . "' class='btn btn-primary btn-sm'>Update</a>
+                        <a href='delete.php?id=" . $result['id'] . "' class='btn btn-danger btn-sm' onclick='return confirmDelete()'>Delete</a>
                       </td>";
                 echo "</tr>";
             }
@@ -78,7 +136,6 @@ $total = mysqli_num_rows($data);
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
 </body>
 
 </html>

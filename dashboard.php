@@ -10,7 +10,7 @@ include("connection.php");
 $user_id = $_SESSION['user_id'];
 
 // Fetch user data from the database based on user_id
-$query = "SELECT * FROM FORM WHERE id='$user_id'";
+$query = "SELECT * FROM FORM1 WHERE id='$user_id'";
 $result = mysqli_query($conn, $query);
 $user = mysqli_fetch_assoc($result);
 ?>
