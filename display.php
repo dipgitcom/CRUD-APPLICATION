@@ -31,6 +31,7 @@ $data = mysqli_query($conn, $query);
 $total = mysqli_num_rows($data);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,87 +46,113 @@ $total = mysqli_num_rows($data);
 </head>
 
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">NSTU-QuickBill</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-building"></i> IIT System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="dashboard.php"><i class="fas fa-home"></i> Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#"><i class="fas-fa-call"></i> Contact us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="logout.php" class="btn btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        
+                    </li>
+                </ul>
+            </div>
+    </nav>
+
     <div class="container mt-5">
         <h2 class="text-center">Student Records</h2>
-        <?php 
-        if ($total > 0) {
-            echo "<table class='table table-bordered'>";
-            echo "<thead class='thead-dark'>";
-            echo "<tr>";
-            echo "<th>ID</th>";
-            echo "<th>First Name</th>";
-            echo "<th>Last Name</th>";
-            echo "<th>Password</th>";
-            echo "<th>Email</th>";
-            echo "<th>Date of Birth</th>";
-            echo "<th>Gender</th>";
-            echo "<th>Address</th>";
-            echo "<th>Phone Number</th>";
-            echo "<th>Session</th>";
-            echo "<th>CGPA</th>";
-            echo "<th>Status</th>";
-            echo "<th>Action</th>";
-            echo "<th>Operations</th>";
-            echo "</tr>";
-            echo "</thead>";
-            echo "<tbody>";
-
-            while ($result = mysqli_fetch_assoc($data)) {
-                echo "<tr>";
-                echo "<td>" . $result['id'] . "</td>";
-                echo "<td>" . $result['fname'] . "</td>";
-                echo "<td>" . $result['lname'] . "</td>";
-                echo "<td>" . $result['password'] . "</td>";
-                echo "<td>" . $result['email'] . "</td>";
-                echo "<td>" . $result['dob'] . "</td>";
-                echo "<td>" . $result['gender'] . "</td>";
-                echo "<td>" . $result['address'] . "</td>";
-                echo "<td>" . $result['phone'] . "</td>";
-                echo "<td>" . $result['session'] . "</td>";
-                echo "<td>" . $result['cgpa'] . "</td>";
-                echo "<td>";
-                if ($result['status'] == 'accepted') {
-                    echo "<i class='fas fa-check-circle text-success'></i> Accepted";
-                } elseif ($result['status'] == 'rejected') {
-                    echo "<i class='fas fa-times-circle text-danger'></i> Rejected";
-                } else {
-                    echo "<i class='fas fa-hourglass-half text-warning'></i> Pending";
-                }
-                echo "</td>";
-                echo "<td>";
-                if ($result['status'] == 'pending') {
-                    echo "<form method='POST' action='' style='display:inline;'>
-                            <input type='hidden' name='id' value='" . $result['id'] . "'>
-                            <input type='hidden' name='new_status' value='accepted'>
-                            <button type='submit' name='update_status' class='btn btn-success btn-sm'>Accept</button>
-                          </form>";
-                    echo "<form method='POST' action='' style='display:inline;'>
-                            <input type='hidden' name='id' value='" . $result['id'] . "'>
-                            <input type='hidden' name='new_status' value='rejected'>
-                            <button type='submit' name='update_status' class='btn btn-danger btn-sm'>Reject</button>
-                          </form>";
-                } else {
-                    echo "<form method='POST' action='' style='display:inline;'>
-                            <input type='hidden' name='id' value='" . $result['id'] . "'>
-                            <input type='hidden' name='new_status' value='pending'>
-                            <button type='submit' name='update_status' class='btn btn-warning btn-sm'>Withdraw</button>
-                          </form>";
-                }
-                echo "</td>";
-                echo "<td>
-                        <a href='update_design.php?id=" . $result['id'] . "' class='btn btn-primary btn-sm'>Update</a>
-                        <a href='delete.php?id=" . $result['id'] . "' class='btn btn-danger btn-sm' onclick='return confirmDelete()'>Delete</a>
-                      </td>";
-                echo "</tr>";
-            }
-
-            echo "</tbody>";
-            echo "</table>";
-        } else {
-            echo "<h2 class='text-center'>No Records Found</h2>";
-        }
-        ?>
+        <?php if ($total > 0): ?>
+            <table class='table table-bordered'>
+                <thead class='thead-dark'>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Password</th>
+                        <th>Email</th>
+                        <th>Date of Birth</th>
+                        <th>Gender</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Session</th>
+                        <th>CGPA</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($result = mysqli_fetch_assoc($data)): ?>
+                        <tr>
+                            <td><?= $result['id'] ?></td>
+                            <td><?= $result['fname'] ?></td>
+                            <td><?= $result['lname'] ?></td>
+                            <td><?= $result['password'] ?></td>
+                            <td><?= $result['email'] ?></td>
+                            <td><?= $result['dob'] ?></td>
+                            <td><?= $result['gender'] ?></td>
+                            <td><?= $result['address'] ?></td>
+                            <td><?= $result['phone'] ?></td>
+                            <td><?= $result['session'] ?></td>
+                            <td><?= $result['cgpa'] ?></td>
+                            <td>
+                                <?php if ($result['status'] == 'accepted'): ?>
+                                    <i class='fas fa-check-circle text-success'></i> Accepted
+                                <?php elseif ($result['status'] == 'rejected'): ?>
+                                    <i class='fas fa-times-circle text-danger'></i> Rejected
+                                <?php else: ?>
+                                    <i class='fas fa-hourglass-half text-warning'></i> Pending
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ($result['status'] == 'pending'): ?>
+                                    <form method='POST' action='' style='display:inline;'>
+                                        <input type='hidden' name='id' value='<?= $result['id'] ?>'>
+                                        <input type='hidden' name='new_status' value='accepted'>
+                                        <button type='submit' name='update_status' class='btn btn-success btn-sm'>Accept</button>
+                                    </form>
+                                    <form method='POST' action='' style='display:inline;'>
+                                        <input type='hidden' name='id' value='<?= $result['id'] ?>'>
+                                        <input type='hidden' name='new_status' value='rejected'>
+                                        <button type='submit' name='update_status' class='btn btn-danger btn-sm'>Reject</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form method='POST' action='' style='display:inline;'>
+                                        <input type='hidden' name='id' value='<?= $result['id'] ?>'>
+                                        <input type='hidden' name='new_status' value='pending'>
+                                        <button type='submit' name='update_status' class='btn btn-warning btn-sm'>Withdraw</button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href='update_design.php?id=<?= $result['id'] ?>' class='btn btn-primary btn-sm'>Update</a>
+                                <a href='delete.php?id=<?= $result['id'] ?>' class='btn btn-danger btn-sm' onclick='return confirmDelete()'>Delete</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <h2 class='text-center'>No Records Found</h2>
+        <?php endif; ?>
     </div>
+
     <script>
         function confirmDelete() {
             return confirm('Are you sure you want to delete this record?');

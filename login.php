@@ -1,113 +1,115 @@
 <?php
+// login.php
+require 'connection.php';
 session_start();
-include("connection.php");
 
-if(isset($_SESSION['user_id'])){
-    header("Location: dashboard.php");
-    exit();
-}
-
-if(isset($_POST['login'])){
-    $email = $_POST['email'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
     $password = $_POST['password'];
-    
-    // Query to check if email and password match
-    $query = "SELECT * FROM FORM WHERE email='$email' AND password='$password'";
-    $result = mysqli_query($conn, $query);
-    $user = mysqli_fetch_assoc($result);
-    
-    if($user){
-        $_SESSION['user_id'] = $user['id'];
+
+    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($user_id, $hashed_password);
+    $stmt->fetch();
+
+    if ($stmt->num_rows == 1 && password_verify($password, $hashed_password)) {
+        $_SESSION['user_id'] = $user_id;
         header("Location: dashboard.php");
         exit();
     } else {
-        $error = "Invalid email or password!";
+        echo '<script>
+                alert("Invalid username or password");
+                window.location.href = "login.php";
+              </script>';
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <style>
         body {
-            background-color:azure
-            
+            background-color: #fafafa;
+            font-family: 'Arial', sans-serif;
         }
-
-        .container {
-            max-width: 400px;
-            margin-top: 100px;
+        .login-container {
+            max-width: 350px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
-
-        h2 {
+        .login-container h1 {
             text-align: center;
-            margin-bottom: 30px;
-            color:#721c24;
-            border: #343a40;
-            text-decoration: solid;
-        }
-
-        .form-group label {
-            color: #343a40;
-            text-decoration: solid;
-    
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0069d9;
-            border-color: #0062cc;
-        }
-
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            padding: 0.75rem 1.25rem;
+            font-weight: 400;
             margin-bottom: 20px;
+        }
+        .form-control {
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 10px;
+            background-color: #0095f6;
+            border: none;
+            color: white;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-login:hover {
+            background-color: #007bbf;
+        }
+        .signup-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .signup-link a {
+            color: #0095f6;
+            text-decoration: none;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <h2>Login</h2>
-        <form action="" method="POST">
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="text" class="form-control" name="email" required>
+    <div class="login-container">
+        
+        <h1>Login</h1>
+        <form method="POST" action="login.php">
+            <div class="mb-3">
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
             </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" class="form-control" name="password" required>
+            <div class="mb-3">
+                <input type="password" class="form-control" name="password" placeholder="Password" required>
             </div>
-            <p>Forgot your password?</p>
-            <p>If you have not registered!
-            <a href="form.php" class="btn btn-primary">Register</a>
-            </p>
-
-            <?php if(isset($error)): ?>
-                <div class="alert alert-danger"><?php echo $error; ?></div>
-            <?php endif; ?>
-            <button type="submit" class="btn btn-primary" name="login">Login</button>
+            <button type="submit" class="btn btn-primary btn-login">Log In</button>
         </form>
+        <div class="signup-link">
+            <p>Don't have an account? <a href="signup.php">Sign up</a></p>
+        </div>
     </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div class="footer">
+        <p>© 2024 IIT System</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 </body>
-
 </html>
